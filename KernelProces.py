@@ -1,12 +1,15 @@
 MaxMp = 5
 Ejecucion = False
 instante = 0
+<<<<<<< HEAD
 listos_max = 2
 listo_susp_max = 2
 
 procesos_listos= []
 procesos_listo_suspendido= []
 procesos_ejecucion = []
+=======
+>>>>>>> 818afef30576130dc6d6c88f9364683869b8ce99
 
 Particiones = [
     {"id": 0, "nombre": "SO", "inicio":0, "tamanio":100, "proceso":"SO", "frag_int" :0},
@@ -86,6 +89,7 @@ def tratar_nuevos(cola_nuevos, instante):
     cola_actual= []
     for p in cola_nuevos: 
         if p.tiempo_arribo == instante and p.estado== 'nuevo':
+<<<<<<< HEAD
             puede_entrar= best_fit(p)
             if puede_entrar == True:
 
@@ -145,8 +149,27 @@ def best_fit(proceso):
 
 
 if __name__ == "__main__"  :
+=======
+            cola_actual.append(p)
+            if Ejecucion == False: 
+                p.estado = 'Ejecucion'
+                Ejecucion = True
+            else:
+                p.estado= 'listo'
+    return cola_actual
+    
+
+#def tratar_listos(cola_actual):
+    #for p in cola_actual:
+
+if __name__ == "__main__":
+>>>>>>> 818afef30576130dc6d6c88f9364683869b8ce99
     cola_nuevos = leer_procesos_desde_archivo("procesos.txt")
 
     print("Procesos leídos:")
     for p in cola_nuevos:
+<<<<<<< HEAD
         print(p)
+=======
+        print(p)
+>>>>>>> 818afef30576130dc6d6c88f9364683869b8ce99
