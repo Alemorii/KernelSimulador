@@ -178,28 +178,41 @@ def tratar_nuevos(cola_nuevos_ref, instante):
     pendientes = [p for p in cola_nuevos_ref if p.tiempo_arribo <= instante and p.estado == 'nuevo']
     
     for p in pendientes:
+        # 1. Control de Multiprogramación Global
         if contar_en_sistema() >= MaxMp:
             continue 
-
-        if best_fit(p):
-            # CORRECCION CLAVE: Si entra a RAM, va a LISTO. 
-            # El planificador decidirá después si pasa a Ejecución.
-            p.estado = 'listo'
-            procesos_listos.append(p)
-        else:
-            if len(procesos_listo_suspendido) < listo_susp_max and contar_en_sistema() < MaxMp:
+        ingresado_a_ram = False
+        
+        if len(procesos_listos) < listos_max:
+            if best_fit(p):
+                p.estado = 'listo'
+                procesos_listos.append(p)
+                ingresado_a_ram = True
+        
+        # 3. Si no entró a RAM (por lista llena o particiones llenas), va a DISCO
+        if not ingresado_a_ram:
+            if len(procesos_listo_suspendido) < listo_susp_max:
                 p.estado = 'listo/suspendido'
                 procesos_listo_suspendido.append(p)
 
 def check_swap_in():
     """Intenta subir procesos de SUSPENDIDO a LISTO si se liberó espacio."""
     global procesos_listos, procesos_listo_suspendido
+    
+    # Si no hay nadie en disco, no hacemos nada
     if not procesos_listo_suspendido:
+        return
+
+    if len(procesos_listos) >= listos_max:
         return
 
     # Usamos copia para poder modificar la lista original dentro del loop
     candidatos = list(procesos_listo_suspendido)
     for p in candidatos:
+        # Doble chequeo por seguridad dentro del bucle
+        if len(procesos_listos) >= listos_max:
+            break
+
         if best_fit(p):
             procesos_listo_suspendido.remove(p)
             p.estado = 'listo'
