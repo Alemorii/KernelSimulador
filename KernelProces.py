@@ -1,7 +1,7 @@
 import sys
 import os
 
-# --- CONFIGURACIÓN GLOBAL ---
+#ambiente inicial
 MaxMp = 5
 Ejecucion = False
 instante = 0
@@ -29,7 +29,7 @@ class Proceso:
         self.tiempo_irrupcion = tiempo_irrupcion
         self.tiempo_restante = tiempo_irrupcion
         self.tamanio = tamanio
-        self.nombre = f"P{pid}" # Formato P1, P2 (sin guion bajo)
+        self.nombre = f"P{pid}" # Formato P1, P2 
         self.estado = 'nuevo'
         self.particion_id = None
         
@@ -42,7 +42,7 @@ class Proceso:
     def __repr__(self):
         return self.nombre
 
-# --- FUNCIONES DE VISUALIZACIÓN ---
+# --- funciones de tabulacion ---
 
 def limpiar_pantalla():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -132,7 +132,7 @@ def imprimir_reporte_final_imagen(procesos_terminados, instante_final):
     print("\n\nPRESIONE ENTER PARA FINALIZAR")
     input()
 
-# --- LÓGICA DEL SISTEMA ---
+# --- logica del gestor de procesos ---
 
 def leer_procesos_desde_archivo(ruta_archivo):
     cola_nuevos = []
