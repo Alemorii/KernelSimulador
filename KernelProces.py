@@ -97,39 +97,29 @@ def mostrar_estado_sistema(instante, cola_nuevos_originales):
 
 def imprimir_reporte_final_imagen(procesos_terminados, instante_final):
     limpiar_pantalla()
-    print("PRESIONE ENTER PARA CONTINUAR\n")
-    input() 
-    
-    print("NO HAY MÁS PROCESOS ESPERANDO PARA ARRIBAR\n")
-    print("DATOS PARA ESTADÍSTICAS:")
+    print("SIMULACIÓN FINALIZADA.\n")
     
     total_espera = 0
     total_retorno = 0
     
-    # Ordenar por PID para la lista
-    procesos_ordenados = sorted(procesos_terminados, key=lambda x: x.pid)
-    
-    for p in procesos_ordenados:
-        # Cálculos finales
+    # Hacemos el cálculo matemático sin imprimir nada
+    for p in procesos_terminados:
         p.tiempo_retorno = p.tiempo_fin - p.tiempo_arribo
         p.tiempo_espera_calc = p.tiempo_retorno - p.tiempo_irrupcion
         
         total_espera += p.tiempo_espera_calc
         total_retorno += p.tiempo_retorno
-        
-        print(f"{p.nombre}, TAMAÑO: {p.tamanio}, TI INICIAL: {p.tiempo_comienzo}, "
-              f"TI FINAL: {p.tiempo_fin}, TI NETO: {p.tiempo_irrupcion}, TA: {p.tiempo_arribo}")
 
     n = len(procesos_terminados)
     prom_espera = total_espera / n if n > 0 else 0
     prom_retorno = total_retorno / n if n > 0 else 0
 
-    print("\nESTADÍSTICAS:\n")
-    print(f" - TOTAL DE PROCESOS EJECUTADOS: {n}")
-    print(f"\n - TIEMPO DE ESPERA PROMEDIO: {prom_espera} UT")
-    print(f" - TIEMPO DE RETORNO PROMEDIO: {prom_retorno} UT")
+    print("ESTADÍSTICAS FINALES:\n")
+    print(f" - Total Procesos: {n}")
+    print(f" - Espera Promedio:  {prom_espera:.2f} UT")
+    print(f" - Retorno Promedio: {prom_retorno:.2f} UT")
     
-    print("\n\nPRESIONE ENTER PARA FINALIZAR")
+    print("\nPRESIONE ENTER PARA CERRAR")
     input()
 
 # --- logica del gestor de procesos ---
