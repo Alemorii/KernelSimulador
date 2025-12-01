@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import filedialog
 import sys
 import os
 
@@ -124,21 +126,56 @@ def imprimir_reporte_final_imagen(procesos_terminados, instante_final):
 
 # --- logica del gestor de procesos ---
 
-def leer_procesos_desde_archivo(ruta_archivo):
+def seleccionar_y_leer_procesos():
+    print("Seleccione el archivo de procesos.")
+    root = tk.Tk()
+    root.withdraw()
+
+    ruta_archivo = filedialog.askopenfilename(
+        title="Selecciona el archivo de procesos",
+        filetypes=(("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*"))
+    )
+
+    root.destroy()
+
+    # Si no seleccionó nada
+    if not ruta_archivo:
+        print("No se seleccionó ningún archivo.")
+        return []
+
     cola_nuevos = []
+
     try:
         with open(ruta_archivo, 'r', encoding='utf-8') as archivo:
             for linea in archivo:
                 linea = linea.strip()
-                if not linea or linea.startswith('#'): continue
+
+                # Ignorar líneas vacías o comentarios
+                if not linea or linea.startswith('#'):
+                    continue
+
                 partes = linea.split()
-                if len(partes) != 4: continue
+
+                # Validar estructura básica: 4 columnas
+                if len(partes) != 4:
+                    print("Línea con estructura inválida:", linea)
+                    return []  
+
                 try:
                     pid, arribo, irrup, tamanio = map(int, partes)
                     cola_nuevos.append(Proceso(pid, arribo, irrup, tamanio))
-                except ValueError: continue
+                except ValueError:
+                    print("Línea con datos no numéricos:", linea)
+                    return []  
+
     except FileNotFoundError:
         print(f"No se encontró el archivo: {ruta_archivo}")
+        return []
+    except Exception as e:
+        print("Error leyendo el archivo:", e)
+        return []
+
+    print(f"Se cargaron {len(cola_nuevos)} procesos desde: {ruta_archivo}")
     return cola_nuevos
 
 def contar_en_sistema():
@@ -308,7 +345,7 @@ def iniciar_simulacion(cola_nuevos_originales):
 
 
 if __name__ == "__main__":
-    cola_nuevos = leer_procesos_desde_archivo("procesos.txt")
+    cola_nuevos = seleccionar_y_leer_procesos()
     
     if cola_nuevos:
         tiempo_final = iniciar_simulacion(cola_nuevos)
